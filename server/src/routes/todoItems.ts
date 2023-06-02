@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import * as _ from "lodash";
 
 import { TodoItem } from "../models/todoItem";
-import { indexRouter } from "./index";
 
 export const router = Router();
 

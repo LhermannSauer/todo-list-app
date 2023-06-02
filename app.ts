@@ -1,4 +1,5 @@
 import express from "express";
+import "dotenv/config";
 
 // init import
 import { initMiddleware } from "./server/src/init/middleware";
