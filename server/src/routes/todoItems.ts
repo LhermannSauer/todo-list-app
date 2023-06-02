@@ -5,7 +5,7 @@ import { TodoItem } from "../models/todoItem";
 
 export const router = Router();
 
-const items: TodoItem[] = [
+let items: TodoItem[] = [
   {
     id: 1,
     title: "Title1",
@@ -70,11 +70,11 @@ router.put("/:id", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.delete("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const item = items.find((i) => i.id === +req.params.id);
+  const totalLength = items.length;
 
-  if (!item) return res.status(404).send("Item with the given ID not found");
+  items = items.filter((item) => item.id !== +req.params.id);
 
-  items.splice(items.indexOf(item), 1);
+  if (totalLength == items.length) throw Error("Nothing was deleted.");
 
   res.status(204).send(true);
 });
