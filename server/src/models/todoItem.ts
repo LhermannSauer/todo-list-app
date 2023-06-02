@@ -12,5 +12,5 @@ export class TodoItem {
   priority: Priority;
   dateDue?: Date;
   dateCreated: Date;
-  status: string;
+  isResolved: boolean;
 }
