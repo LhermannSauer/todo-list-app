@@ -1,5 +1,6 @@
 import { todoItemRepo } from '../repositories/itemRepository';
 import { TodoItem } from '../models/todoItem';
+import { NotFoundError } from '../common/errors';
 
 interface TodoItemDTO {
   title: string;
@@ -17,7 +18,7 @@ export class TodoItemController {
   static getItemById = async (id: number): Promise<TodoItem> => {
     const item = await todoItemRepo.findOneBy({ id });
 
-    if (!item) throw new Error('TodoItem not found');
+    if (!item) throw new NotFoundError('TodoItem');
 
     return item;
   };
