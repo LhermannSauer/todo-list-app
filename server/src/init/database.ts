@@ -8,11 +8,11 @@ export const AppDataSource = new DataSource({
   username: 'root',
   password: process.env.DBPASSWORD,
   database: process.env.DBNAME,
-  entities: ['../models/*.ts'],
+  entities: [__dirname + '/../models/*.{ts,js}'],
   migrations: ['../migrations/*.ts'],
   timezone: '-03:00',
   //migrationsRun: true,
-  // synchronize: true,
+  synchronize: true,
 });
 
 export const initDB = () => {
