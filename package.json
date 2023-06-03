@@ -9,7 +9,7 @@
     "build": "tsc --build",
     "typeorm": "typeorm-ts-node-commonjs"
   },
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/LhermannSauer/todo-list-app.git"
   },
@@ -31,6 +31,7 @@
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "mysql": "^2.18.1",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.16"
   },
   "devDependencies": {
