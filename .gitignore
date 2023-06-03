@@ -30,3 +30,6 @@ package-lock.json
 
 # Compiled output
 dist/
+
+# Other
+*.prettierrc
