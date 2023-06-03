@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.ts",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
-  "repository": {
+    "repository": {
     "type": "git",
     "url": "git+https://github.com/LhermannSauer/todo-list-app.git"
   },
