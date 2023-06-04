@@ -1,6 +1,9 @@
 import express from 'express';
 import 'reflect-metadata';
-import 'dotenv/config';
+
+import * as dotenv from 'dotenv';
+dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
+
 import { configServer } from './server/src/init';
 
 const app = express();
