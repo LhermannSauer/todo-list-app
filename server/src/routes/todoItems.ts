@@ -35,51 +35,31 @@ router.get(
 
 router.get(
   '/:id',
-  asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+  asyncMiddleware(async (req, res, next) => {
     const item = await TodoItemController.getItemById(+req.params.id);
     res.json(item);
   })
 );
 
-router.post('/', (req: Request, res: Response, next: NextFunction) => {
-  const itemDTO: Omit<TodoItem, 'id' | 'dateCreated' | 'isResolved'> = _.pick(
-    req.body,
-    ['title', 'description', 'priority', 'dateDue']
-  );
+router.post(
+  '/',
+  asyncMiddleware(async (req, res, next) => {
+    res.json(await TodoItemController.addItem(req.body));
+  })
+);
 
-  const newItem: TodoItem = {
-    ...itemDTO,
-    id: items.length,
-    isResolved: false,
-    dateCreated: new Date(),
-  };
+router.put(
+  '/:id',
+  asyncMiddleware(async (req, res, next) => {
+    res.json(await TodoItemController.updateItem(+req.params.id, req.body));
+  })
+);
 
-  items.push(newItem);
+router.delete(
+  '/:id',
+  asyncMiddleware(async (req, res, next) => {
+    const result = await TodoItemController.removeItemById(+req.params.id);
 
-  res.status(201).json(newItem);
-});
-
-router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
-  const itemDTO: Omit<Partial<TodoItem>, 'id' | 'dateCreated'> = _.pick(
-    req.body,
-    ['title', 'description', 'priority', 'dateDue', 'isResolved']
-  );
-
-  const item = items.find((i) => i.id === +req.params.id);
-
-  if (!item) return res.status(404).send('Item with the given ID not found');
-
-  _.assign(item, itemDTO);
-
-  res.json(item);
-});
-
-router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
-  const totalLength = items.length;
-
-  items = items.filter((item) => item.id !== +req.params.id);
-
-  if (totalLength == items.length) throw Error('Nothing was deleted.');
-
-  res.status(204).send(true);
-});
+    res.status(204).send(result);
+  })
+);
