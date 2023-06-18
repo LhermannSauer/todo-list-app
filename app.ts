@@ -1,8 +1,13 @@
 import express from 'express';
 import 'reflect-metadata';
+import fs from 'fs';
 
 import * as dotenv from 'dotenv';
-dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
+if (fs.existsSync(`./.env.${process.env.NODE_ENV}`)) {
+  dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
+} else {
+  throw new Error('Configuration file not found!');
+}
 
 import { configServer } from './server/src/init';
 
