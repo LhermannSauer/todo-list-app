@@ -6,12 +6,11 @@ import {
   ValidationError,
 } from '../common/errors';
 import { validate, Length } from 'class-validator';
-import _ from 'lodash';
 
 interface TodoItemDTO {
   title: string;
   description: string;
-  datecrated: Date;
+  dateCreated: Date;
   dateDue?: Date;
   isResolved: boolean;
   priority: number;
@@ -33,16 +32,17 @@ export class TodoItemController {
   };
 
   static addItem = async (todoItemDTO: TodoItemDTO) => {
-    todoItemDTO.datecrated = new Date();
+    todoItemDTO.dateCreated = new Date();
     todoItemDTO.isResolved = false;
 
     let item = new TodoItem();
-    _.assign(item, todoItemDTO);
-    validate(item).then((errors) => {
-      if (errors.length > 0) {
-        throw new ValidationError('Validation failed. Errors: ' + errors);
-      }
-    });
+    item = { ...item, ...todoItemDTO };
+
+    const errors = await validate(item);
+    if (errors.length > 0) {
+      throw new ValidationError('Validation failed. Errors: ' + errors);
+    }
+
     item = todoItemRepo.create(item);
 
     await todoItemRepo.save(item);
@@ -60,7 +60,8 @@ export class TodoItemController {
 
   static updateItem = async (id: number, todoItemDTO: TodoItemDTO) => {
     let update = new TodoItem();
-    _.assign(update, todoItemDTO);
+
+    update = { ...update, ...todoItemDTO };
     validate(update, { skipMissingProperties: true }).then((errors) => {
       if (errors.length)
         throw new ValidationError('Validation failed. Errors: ' + errors);
