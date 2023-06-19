@@ -11,3 +11,13 @@ export class InvalidParameterError extends Error {
     this.message = `Incorrect value for the ${parameterName} parameter`;
   }
 }
+
+export class ValidationError extends Error {
+  /**
+   *
+   */
+  constructor(message: string) {
+    super();
+    this.message = message;
+  }
+}

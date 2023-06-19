@@ -1,6 +1,12 @@
 import { todoItemRepo } from '../repositories/itemRepository';
 import { TodoItem } from '../models/todoItem';
-import { InvalidParameterError, NotFoundError } from '../common/errors';
+import {
+  InvalidParameterError,
+  NotFoundError,
+  ValidationError,
+} from '../common/errors';
+import { validate, Length } from 'class-validator';
+import _ from 'lodash';
 
 interface TodoItemDTO {
   title: string;
@@ -17,6 +23,8 @@ export class TodoItemController {
   };
 
   static getItemById = async (id: number): Promise<TodoItem> => {
+    if (!Number.isInteger(id) || id <= 0) throw new InvalidParameterError('ID');
+
     const item = await todoItemRepo.findOneBy({ id });
 
     if (!item) throw new NotFoundError('TodoItem');
@@ -24,14 +32,18 @@ export class TodoItemController {
     return item;
   };
 
-  static addItem = async (request: TodoItemDTO) => {
-    if (request.priority > 3)
-      throw new InvalidParameterError('Incorrect priority');
+  static addItem = async (todoItemDTO: TodoItemDTO) => {
+    todoItemDTO.datecrated = new Date();
+    todoItemDTO.isResolved = false;
 
-    request.datecrated = new Date();
-    request.isResolved = false;
-
-    const item = todoItemRepo.create(request);
+    let item = new TodoItem();
+    _.assign(item, todoItemDTO);
+    validate(item).then((errors) => {
+      if (errors.length > 0) {
+        throw new ValidationError('Validation failed. Errors: ' + errors);
+      }
+    });
+    item = todoItemRepo.create(item);
 
     await todoItemRepo.save(item);
 
@@ -39,24 +51,30 @@ export class TodoItemController {
   };
 
   static removeItemById = async (id: number): Promise<boolean> => {
+    if (!Number.isInteger(id) || id <= 0) throw new InvalidParameterError('ID');
+
     const result = await todoItemRepo.delete({ id });
 
     return typeof result.affected === 'number';
   };
 
-  static updateItem = async (id: number, request: TodoItemDTO) => {
-    if (request.priority > 3)
-      throw new InvalidParameterError('Incorrect priority');
+  static updateItem = async (id: number, todoItemDTO: TodoItemDTO) => {
+    let update = new TodoItem();
+    _.assign(update, todoItemDTO);
+    validate(update, { skipMissingProperties: true }).then((errors) => {
+      if (errors.length)
+        throw new ValidationError('Validation failed. Errors: ' + errors);
+    });
 
     let item = await this.getItemById(id);
 
-    item.title = request.title || item.title;
-    item.description = request.description || item.description;
-    item.dateDue = request.dateDue || item.dateDue;
-    item.priority = request.priority || item.priority;
-    item.isResolved = request.isResolved || item.isResolved;
+    item.title = todoItemDTO.title || item.title;
+    item.description = todoItemDTO.description || item.description;
+    item.dateDue = todoItemDTO.dateDue || item.dateDue;
+    item.priority = todoItemDTO.priority || item.priority;
+    item.isResolved = todoItemDTO.isResolved || item.isResolved;
 
-    item = todoItemRepo.merge(item, request);
+    item = todoItemRepo.merge(item, todoItemDTO);
     await todoItemRepo.save(item);
 
     return item;

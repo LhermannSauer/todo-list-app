@@ -11,6 +11,6 @@ export function initMiddleware(app: Express): void {
   app.use(urlencoded({ extended: false }));
   app.use(cors());
   // app middleware
-  routesMiddleware(app);
   errorMiddleware(app);
+  routesMiddleware(app);
 }
