@@ -23,6 +23,7 @@ package-lock.json
 
 # Environment variables
 .env
+.env.dev
 .env.local
 .env.development.local
 .env.test.local
@@ -30,3 +31,7 @@ package-lock.json
 
 # Compiled output
 dist/
+
+# Other
+*.prettierrc
+/client
